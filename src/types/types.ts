@@ -20,7 +20,7 @@ interface IConfig {
       src: string;
       opacity: number;
     };
-    options: {
+    options?: {
       element: {
         name: string;
         x: 400;
@@ -34,8 +34,8 @@ interface IConfig {
       };
     };
   };
-  "1F": {
-    plot: {
+  FF: {
+    plot?: {
       x: number;
       y: number;
       positionRule: string;
@@ -55,7 +55,42 @@ interface IConfig {
       src: string;
       opacity: number;
     };
-    options: {
+    options?: {
+      element: {
+        name: string;
+        x: 400;
+        y: 5;
+        positionRule: string;
+        width: number;
+        height: number;
+        sizeRule: string;
+        src: string;
+        opacity: number;
+      };
+    };
+  };
+  SF: {
+    plot?: {
+      x: number;
+      y: number;
+      positionRule: string;
+      width: number;
+      height: number;
+      sizeRule: string;
+      src: string;
+      opacity: number;
+    };
+    unit: {
+      x: number;
+      y: number;
+      positionRule: string;
+      width: number;
+      height: number;
+      sizeRule: string;
+      src: string;
+      opacity: number;
+    };
+    options?: {
       element: {
         name: string;
         x: 400;

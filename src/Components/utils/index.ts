@@ -17,9 +17,10 @@ export const addSprite = async (
   type,
   floor
 ) => {
+  console.log("config.src,floor,type :>> ", config.src, floor, type);
   const texture = await PIXI.Assets.load(config.src);
   const sprite = new PIXI.Sprite(texture);
-
+  sprite.label = type;
   if (config.positionRule === "enabled") {
     sprite.x = config?.x;
     sprite.y = config?.y;
@@ -33,19 +34,8 @@ export const addSprite = async (
   } else {
     sprite.scale.set(toScale(sprite, app));
   }
-  floorsObj = {
-    ...floorsObj,
-    [floor]: {
-      ...floorsObj[floor],
-      [type]: {
-        ...[type],
-        sprite,
-        opacity: config.opacity,
-      },
-    },
-  };
-  app.stage.addChild(sprite);
-  return floorsObj;
+
+  return sprite;
 };
 export const addOptionalSprite = async (
   app: PIXI.Application,
@@ -56,6 +46,7 @@ export const addOptionalSprite = async (
 ) => {
   const texture: PIXI.Texture = await PIXI.Assets.load(config.element.src);
   const sprite = new PIXI.Sprite(texture);
+  sprite.label = type;
   if (config.element.positionRule === "enabled") {
     sprite.x = config.element.x;
 
@@ -87,6 +78,6 @@ export const addOptionalSprite = async (
       },
     },
   };
-  app.stage.addChild(sprite);
+
   return floorsObj;
 };
