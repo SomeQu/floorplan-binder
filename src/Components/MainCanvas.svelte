@@ -22,9 +22,14 @@ import config from '../Data/config'
           const itemConf = config[item]
           for(const layer in itemConf){
             const elementConf = itemConf[layer]
+            
             const container = new PIXI.Container()
             for(const element in elementConf){
-              
+              if(element ==='layers'){
+                const partConf = elementConf[element]
+                for(const parts in partConf )
+               
+              }
               }
           }
         }

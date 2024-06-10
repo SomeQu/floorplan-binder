@@ -10,13 +10,7 @@ const toScale = (sprite: PIXI.Sprite, app: PIXI.Application): number => {
   return scale;
 };
 
-export const addSprite = async (
-  app: PIXI.Application,
-  config,
-  floorsObj,
-  type,
-  floor
-) => {
+export const addSprite = async (app: PIXI.Application, config, type, floor) => {
   console.log("config.src,floor,type :>> ", config.src, floor, type);
   const texture = await PIXI.Assets.load(config.src);
   const sprite = new PIXI.Sprite(texture);
