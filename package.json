@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@types/three": "^0.165.0",
+    "pixi.js": "^8.1.6",
     "three": "^0.165.0"
   }
 }
