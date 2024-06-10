@@ -22,6 +22,7 @@ export const config: IConfig = {
     },
     options: {
       element: {
+        name: "tree",
         x: 400,
         y: 5,
         positionRule: "enabled",
@@ -56,6 +57,7 @@ export const config: IConfig = {
     },
     options: {
       element: {
+        name: "tree",
         x: 400,
         y: 5,
         positionRule: "enabled",

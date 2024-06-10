@@ -22,6 +22,7 @@ interface IConfig {
     };
     options: {
       element: {
+        name: string;
         x: 400;
         y: 5;
         positionRule: string;
@@ -56,6 +57,7 @@ interface IConfig {
     };
     options: {
       element: {
+        name: string;
         x: 400;
         y: 5;
         positionRule: string;

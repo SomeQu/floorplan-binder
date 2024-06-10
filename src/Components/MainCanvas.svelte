@@ -4,15 +4,13 @@
   import {Assets} from 'pixi.js'
   import {config} from '../Data/config'
   import { writable, type Writable } from "svelte/store";
-  const toScale =(sprite:PIXI.Sprite,app:PIXI.Application):number =>{
-    const scale = Math.max(app.screen.width / sprite.width, app.screen.height / sprite.height)*0.50;
-    console.log('scale,sprite :>> ', scale,sprite);
-    return scale
-  }
+  import {addSprite,addOptionalSprite} from './utils/index'
+
+ 
   let app: PIXI.Application;
   let view: HTMLCanvasElement;
   const floor:Writable<string> = writable('GF')
-   
+  const floorsObj = writable({}) 
   onMount(async() => {
       view.width = window.innerWidth;
       view.height = window.innerHeight;
@@ -21,73 +19,11 @@
       await app.init({ view,backgroundColor:'#55432F',  width: window.innerWidth, height: window.innerHeight, autoDensity: true, resolution: devicePixelRatio, }); 
       for(let option in config.GF){
         if(option ==='plot'){
-          const texture = await PIXI.Assets.load(config.GF[option].src)
-          texture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
-          const sprite = new PIXI.Sprite(texture);
-
-       if(config.GF[option].positionRule==='enabled'){
-         sprite.x =config.GF[option]?.x
-         sprite.y = config.GF[option]?.y
-        }else if (config.GF[option].positionRule==='disabled'){
-          sprite.x = (app.screen.width - sprite.width) / 2
-          sprite.y = (app.screen.width - sprite.width) / 2
-        }
-          if(config.GF[option].sizeRule==='enabled'){
-              sprite.width = config.GF[option].width
-              sprite.height = config.GF[option].height
-            }else{
-              sprite.scale.set(toScale(sprite,app));
-            }
-          app.stage.addChild(sprite);
+         $floorsObj= await addSprite(app,config.GF[option],$floorsObj,option,'GF')
         }else if (option ==='unit'){
-          const texture = await PIXI.Assets.load(config.GF[option].src)
-          texture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
-          const sprite = new PIXI.Sprite(texture);
-        
-         
-      
-          sprite.scale.set(toScale(sprite,app));
-       if(config.GF[option].positionRule==='enabled'){
-         sprite.x =   config.GF[option]?.x
-         sprite.y = config.GF[option]?.y
-        }else if (config.GF[option].positionRule==='disabled'){
-          sprite.x = (app.screen.width - sprite.width) / 2 
-          sprite.y = (app.screen.width - sprite.width) / 2
-        }
-          if(config.GF[option].sizeRule==='enabled'){
-              sprite.width = config.GF[option].width
-              sprite.height = config.GF[option].height
-            }else if (config.GF[option].sizeRule==='disabled'){
-              sprite.scale.set(toScale(sprite,app));
-            }
-          app.stage.addChild(sprite);
+          $floorsObj= await addSprite(app,config.GF[option],$floorsObj,option,'GF')
         }else if (option ==='options'){
-          const texture:PIXI.Texture = await PIXI.Assets.load(config.GF[option].element.src)
-          const sprite = new PIXI.Sprite(texture);
-          texture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
-         if(config.GF[option].element.positionRule==='enabled'){
-
-           sprite.x = config.GF[option].element.x ===undefined ?sprite.x = (app.screen.width - sprite.width) / 2:  config.GF[option].element.x
-          
-          
-          sprite.y = config.GF[option].element.x ===undefined ?sprite.y = (app.screen.width - sprite.width) / 2: config.GF[option].element.y
-          }else if(config.GF[option].element.positionRule==='disabled'){
-            sprite.x = (app.screen.width - sprite.width) / 2 
-            sprite.y = (app.screen.width - sprite.width) / 2
-          }
-       
-       
-          if(config.GF[option].element.sizeRule==='enabled'){
-              sprite.width = config.GF[option].element.width
-              sprite.height = config.GF[option].element.height
-            }else if (config.GF[option].element.sizeRule==='disabled'){
-              sprite.scale.set(toScale(sprite,app));
-            }
-      
-          //?      | config.GF[option].element.x === false ? sprite.x = (app.screen.width - sprite.width) / 2; : config.GF[option].element.x
-          //?      |config.GF[option].element.y === false ?sprite.y = (app.screen.height - sprite.height) / 2;   : config.GF[option].element.y
-    
-          app.stage.addChild(sprite);
+         $floorsObj =await addOptionalSprite(app,config.GF[option],$floorsObj,option,'GF')
         }
       }
     
@@ -97,16 +33,24 @@
    
      
   });
+  $:console.log('$floorsObj :>> ', $floorsObj);
+  const hideSprite=(element)=>{
+    return element.sprite.alpha = element.opacity
+  }
+  const hideOptionSprites = (elements) =>{
+    for(const item in elements){
+      console.log('item :>> ', item);
+      elements[item].sprite.alpha = elements[item].opacity
+    }
+  }
+
   $:if($floor ==='1F'){
-    addBunny(app)
+    hideSprite($floorsObj.GF.plot)
+    hideSprite($floorsObj.GF.unit)
+    hideOptionSprites($floorsObj.GF.options)
    
   }
-  const addBunny = async(app:PIXI.Application) =>{
-    const texture =  await Assets.load('https://pixijs.com/assets/bunny.png');   
-    const sprite = new PIXI.Sprite(texture)
-
-   return app.stage.addChild(sprite)
-  }
+  
   $:console.log('$floor :>> ', $floor);
 </script>
 
