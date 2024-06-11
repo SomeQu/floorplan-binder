@@ -9,7 +9,7 @@ const config: IConfig = {
     maxX: 400,
     maxY: 100,
   },
-  minZoom: 0.5,
+  minZoom: 1,
   maxZoom: 3.0,
   layers: {
     GF: {

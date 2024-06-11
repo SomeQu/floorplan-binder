@@ -42,6 +42,8 @@
   const mainContainer: PIXI.Container<PIXI.ContainerChild> = new PIXI.Container();
   const opacityMap: Writable<{ [key: string]: number | unknown }> = writable({});
 
+
+  let hovered = ''
   if (typeof mainContainer.label === 'string') {
     mainContainer.label = 'main';
   }
@@ -84,14 +86,17 @@
   };
  
   onMount(async () => {
-    view.width = window.innerWidth;
-    view.height = window.innerHeight;
+    const resolution = window.devicePixelRatio;
+    const width = window.innerWidth * resolution; 
+    const height = window.innerHeight * resolution; 
+    view.width = width
+    view.height = height
     view.addEventListener('pointerdown', onDragStart);
     view.addEventListener('pointerup', onDragEnd);
     view.addEventListener('pointermove', onDragMove);
 
     app = new PIXI.Application();
-    await app.init({ view, backgroundColor: 'grey', width: window.innerWidth, height: window.innerHeight, autoDensity: true, resolution: devicePixelRatio });
+    await app.init({ view, backgroundColor: 'grey', width, height, autoDensity: true, resolution });
 
     for (const item in config) {
       if (item === 'layers') {
@@ -174,14 +179,18 @@
   $: if ($floor) {
     updateVisibility($floor);
   }
+
 </script>
 
 <canvas id="application" bind:this={view}></canvas>
 
 <div class="buttons">
-  <button disabled={$floor === 'GF'} on:click={() => handleClick('GF')}>GF</button>
-  <button disabled={$floor === 'FF'} on:click={() => handleClick('FF')}>FF</button>
-  <button disabled={$floor === 'SF'} on:click={() => handleClick('SF')}>SF</button>
+  <span class="title">Floor</span>
+  {#each config.floorOrder as _floor}
+  
+  <button class="btn" on:mouseleave={()=>hovered=''} on:mouseenter={()=>hovered=_floor} class:hovered={hovered===_floor && $floor!==_floor} class:active={$floor===_floor} disabled={$floor === _floor} on:click={() => handleClick(_floor)}>{_floor}</button>
+  {/each}
+
 </div>
 
 <style lang="scss">
@@ -190,5 +199,40 @@
     display: block;
     width: 100%;
     height: 100%;
+  }
+  .buttons{
+
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 10px;
+    position: absolute;
+    left: 5%;
+    top: 50%;
+    border: 1px solid rgba(35, 35, 35, 0.85);
+    border-radius: 8px;
+    background-color: rgba(35, 35, 35, 0.85);
+    padding: 10px;
+    .btn{
+      border-radius: 4px;
+      border: 1px solid #3e3e3e;
+      background-color: #353535;
+      color: #dadada;
+      width: 35px;
+      height: 35px;
+      transition: 0.3s;
+      &.active{
+        background-color: #DADADA;
+        color: #353535;
+      }
+      &.hovered{
+      background-color: #464646;
+      transition: 0.3s;
+      }
+    }
+    .title{
+      font-size: 14px;
+      color: #BDBDBD;
+    }
   }
 </style>
