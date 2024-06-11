@@ -47,7 +47,6 @@ export const onWheel = (
     oldScale +
     -1 * Math.max(-1, Math.min(1, event.deltaY)) * scaleSpeed * oldScale;
 
-  // Проверяем, не меньше ли новый масштаб минимального предела
   if (newScale >= minZoom && newScale <= maxZoom) {
     const pointerX = event.clientX - view.getBoundingClientRect().left;
     const pointerY = event.clientY - view.getBoundingClientRect().top;

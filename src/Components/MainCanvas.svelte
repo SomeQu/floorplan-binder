@@ -6,6 +6,8 @@
   import { createSprite, onWheel, preventDefaultOnCanvas } from "./utils";
   import type { GroupLayer, PollyBoundaries, SingleLayer } from "../types/types";
 
+//! POLLY LOGIC/// NOT WORKING PROPPERLY
+
 // const updatePolly = () => {
 //   const pollyBoundaries: PollyBoundaries = config.polly;
 //   return pollyBoundaries;
