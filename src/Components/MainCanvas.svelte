@@ -1,16 +1,16 @@
 <script lang="ts">
-  import { afterUpdate, beforeUpdate, onMount } from "svelte";
+  import {  onMount } from "svelte";
   import * as PIXI from "pixi.js";
   import config, { type floorOrderType } from '../Data/config';
   import { writable, type Writable } from "svelte/store";
   import { createSprite, onWheel, preventDefaultOnCanvas } from "./utils";
   import type { GroupLayer, PollyBoundaries, SingleLayer } from "../types/types";
 
-// const updateBoundaries = () => {
+// const updatePolly = () => {
 //   const pollyBoundaries: PollyBoundaries = config.polly;
 //   return pollyBoundaries;
 // };
-// let { minX, minY, maxX, maxY } = updateBoundaries();
+// let { minX, minY, maxX, maxY } = updatePolly();
 
 // const scalePolly = (event: WheelEvent, container: PIXI.Container) => {
 //   const scaleSpeed = 0.1;

@@ -4,7 +4,7 @@ import config from "../../Data/config";
 export const createSprite = async (
   itemConfiguration: GroupLayer | SingleLayer,
   partConfiguration: GroupLayer | SingleLayer
-) => {
+): Promise<PIXI.Sprite> => {
   const src = partConfiguration.src ?? "";
   const texture = await PIXI.Assets.load(src);
   const sprite = new PIXI.Sprite(texture);
