@@ -54,7 +54,7 @@ Install floorplan-binder via npm
 ```bash
   git clone https://github.com/SomeQu/floorplan-binder.git
 
-  npm Install
+  npm install
 
   npm run dev
 
