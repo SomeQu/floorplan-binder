@@ -30,6 +30,7 @@ export interface SingleLayer extends Layer {
 export type floorOrderForTypesType = string[];
 export interface IConfig {
   floorOrder: floorOrderForTypesType;
+  polly: PollyBoundaries;
   minZoom: number;
   maxZoom: number;
   layers: {
@@ -40,3 +41,9 @@ interface DragData {
   startX: number;
   startY: number;
 }
+export type PollyBoundaries = {
+  minX: number;
+  minY: number;
+  maxX: number;
+  maxY: number;
+};

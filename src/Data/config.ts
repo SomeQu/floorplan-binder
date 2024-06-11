@@ -3,8 +3,14 @@ export type floorOrderType = "GF" | "SF" | "FF";
 
 const config: IConfig = {
   floorOrder: ["GF", "FF", "SF"],
-  minZoom: 1.0,
-  maxZoom: 2,
+  polly: {
+    minX: 0,
+    minY: 0,
+    maxX: 400,
+    maxY: 100,
+  },
+  minZoom: 0.5,
+  maxZoom: 3.0,
   layers: {
     GF: {
       type: "group",
@@ -70,7 +76,7 @@ const config: IConfig = {
           name: "plot_SF",
           src: "public/images/parts/plot_2F.png",
           zIndex: 3,
-          opacity: 0.4, // Увеличиваем опасити для SF до 0.3
+          opacity: 0.4,
         },
         {
           type: "unit",
@@ -84,7 +90,7 @@ const config: IConfig = {
           name: "table_SF",
           src: "public/images/parts/optional2.png",
           zIndex: 3,
-          opacity: 0.5, // Уменьшаем опасити для table_SF до 0.1
+          opacity: 0.5,
         },
       ],
     },

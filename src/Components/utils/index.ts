@@ -1,5 +1,6 @@
 import * as PIXI from "pixi.js";
 import type { GroupLayer, SingleLayer, Layer } from "../../types/types";
+import config from "../../Data/config";
 export const createSprite = async (
   itemConfiguration: GroupLayer | SingleLayer,
   partConfiguration: GroupLayer | SingleLayer
@@ -27,15 +28,20 @@ export const preventDefaultOnCanvas = (event: WheelEvent) => {
 };
 
 const scaleSpeed = 0.1;
-const maxZoom = 2;
+const maxZoom = config?.maxZoom;
 
-const minZoom = 1;
+const minZoom = config?.minZoom;
 
 export const onWheel = (
   event: WheelEvent,
   view: HTMLCanvasElement,
   container: PIXI.Container<PIXI.ContainerChild>
 ) => {
+  const diffX = event.clientX - (container as any).dragData.startX;
+  const diffY = event.clientY - (container as any).dragData.startY;
+  let newX = (container as any).dragData.initialX + diffX;
+  let newY = (container as any).dragData.initialY + diffY;
+  console.log("newX :>> ", newX);
   const oldScale = container.scale.x;
   const newScale =
     oldScale +
