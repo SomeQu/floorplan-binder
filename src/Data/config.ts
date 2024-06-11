@@ -1,15 +1,6 @@
 const config = {
   initialZoom: 1.0,
-  mainLayer: {
-    x: 400,
-    y: 5,
-    positionRule: "enabled",
-    width: 800,
-    height: 800,
-    sizeRule: "enabled",
-    src: "/public/mainLayer.png",
-    opacity: 0.4,
-  },
+
   layers: {
     GF: {
       type: "group",
@@ -19,14 +10,20 @@ const config = {
       layers: [
         {
           type: "unit",
+          name: "plot_GF",
+          src: "public/images/parts/unit_GF.png",
+          opacity: 1.0,
+        },
+        {
+          type: "unit",
           name: "unit_GF",
-          src: "path/to/unit_GF.png",
+          src: "public/images/parts/unit_GF.png",
           opacity: 1.0,
         },
         {
           type: "optional",
           name: "tree_GF",
-          src: "path/to/optional.png",
+          src: "public/images/parts/optional.png",
 
           opacity: 0.8,
         },
@@ -35,13 +32,13 @@ const config = {
     FF: {
       type: "single",
       name: "FF",
-      position: { x: 100, y: 100 },
-      size: { width: 300, height: 200 },
+      position: { x: 400, y: 5 },
+      size: { width: 800, height: 800 },
       layers: [
         {
           type: "unit",
           name: "unit_FF",
-          src: "path/to/unit_1F.png",
+          src: "public/images/parts/unit_1F.png",
           position: { x: 400, y: 5 },
           size: { width: 800, height: 800 },
           opacity: 1.0,
@@ -57,13 +54,13 @@ const config = {
         {
           type: "unit",
           name: "unit_SF",
-          src: "path/to/unit_GF.png",
+          src: "public/images/parts/unit_2F.png",
           opacity: 1.0,
         },
         {
           type: "optional",
           name: "table_SF",
-          src: "path/to/optional2.png",
+          src: "public/images/parts/optional2.png",
 
           opacity: 0.8,
         },
