@@ -1,35 +1,36 @@
 <script lang="ts">
   import { afterUpdate, beforeUpdate, onMount } from "svelte";
   import * as PIXI from "pixi.js";
-import config from '../Data/config'
+import config, { type floorOrderType } from '../Data/config'
   import { writable, type Writable } from "svelte/store";
+  import { createSprite, onWheel, preventDefaultOnCanvas } from "./utils";
+  import type { GroupLayer, SingleLayer } from "../types/types";
 
  
   let app: PIXI.Application;
   let view: HTMLCanvasElement;
-  const floor:Writable<'GF'|'SF'|'FF'> = writable('GF')
+  const floor:Writable<floorOrderType> = writable('GF')
   const mainContainer:PIXI.Container<PIXI.ContainerChild> = new PIXI.Container()
-  const opacityMap: Writable<{ [key: string]: number }> = writable({})
-  mainContainer.label='main'
+  const opacityMap: Writable<{ [key: string]: number|unknown }> = writable({})
+  if(typeof mainContainer.label ==='string'){
+    mainContainer.label='main'
+    }
 
-interface DragData {
-    startX: number;
-    startY: number;
-}
+
 
 
 (mainContainer as any).dragData = {};
 
 
-function onDragStart(event) {
-    mainContainer.dragging = true;
+const onDragStart=(event:PointerEvent)=> {
+    (mainContainer as any).dragging = true;
     (mainContainer as any).dragData.startX = event.clientX;
     (mainContainer as any).dragData.startY = event.clientY;
 }
 
 
-function onDragMove(event) {
-    if (mainContainer.dragging) {
+const onDragMove =(event:PointerEvent) => {
+    if ((mainContainer as any).dragging) {
         const newPositionX = event.clientX;
         const newPositionY = event.clientY;
         const diffX = newPositionX - (mainContainer as any).dragData.startX;
@@ -41,8 +42,10 @@ function onDragMove(event) {
     }
 }
 
-function onDragEnd(event) {
-    mainContainer.dragging = false;
+
+
+const onDragEnd=(event:PointerEvent)=> {
+    (mainContainer as any).dragging = false;
     (mainContainer as any).dragData = {};
 }
 
@@ -51,7 +54,6 @@ function onDragEnd(event) {
       view.height = window.innerHeight;
       view.addEventListener('pointerdown', onDragStart);
       view.addEventListener('pointerup', onDragEnd);
-      view.addEventListener('pointerupoutside', onDragEnd);
       view.addEventListener('pointermove', onDragMove);
       
       app = new PIXI.Application();
@@ -73,23 +75,8 @@ function onDragEnd(event) {
               if(element ==='layers'){
                 const partConf = elementConf[element]
                 for(const parts in partConf ){
+                  const sprite =await createSprite(itemConf[layer],(partConf[parts] as GroupLayer | SingleLayer))
               
-                  const src = partConf[parts].src ?? ''
-                  const texture = await PIXI.Assets.load(src);
-                  const sprite = new PIXI.Sprite(texture);
-                  sprite.label = partConf[parts].name
-                  const positionX = itemConf[layer].position?.x ?? 0;
-              const positionY = itemConf[layer].position?.y ?? 0;
-              const width = itemConf[layer].size?.width ?? 0;
-              const height = itemConf[layer].size?.height ?? 0;
-              const zIndex = itemConf[layer].zIndex ?? 1
-              sprite.x = positionX;
-              sprite.y = positionY;
-              sprite.width = width;
-              sprite.height = height;
-              sprite.zIndex = zIndex
-              sprite.visible = false;
-              sprite.renderable = false;
               $opacityMap = {
                 ...$opacityMap,
                 [partConf[parts].name]:partConf[parts].opacity}; 
@@ -104,18 +91,12 @@ function onDragEnd(event) {
            
               mainContainer.addChild(container)
               app.stage.interactive = true;
-    app.stage.on('pointerdown', onDragStart)
-             .on('pointerup', onDragEnd)
-             .on('pointerupoutside', onDragEnd)
-             .on('pointermove', onDragMove);
-
-              // app.stage.addChild(mainContainer)
-
-              
-              
-               
-                
-              
+              app.stage.on('pointerdown', onDragStart)
+                       .on('pointerup', onDragEnd)
+                       .on('pointerupoutside', onDragEnd)
+                       .on('pointermove', onDragMove);
+              app.stage.onwheel = (e)=>onWheel(e,view,mainContainer)
+              view.onwheel=preventDefaultOnCanvas
             
           }
         }
@@ -123,13 +104,17 @@ function onDragEnd(event) {
       updateVisibility('GF');
       app.stage.addChild(mainContainer)
   });
+
+
+ 
+
  const handleClick =(message:string) =>{
   if(message ==='GF' ||message ==='SF' || message ==='FF')
   $floor = message
  }
 
  const updateVisibility = (floor: string) => {
-  const floorOrder = ['GF', 'FF', 'SF'];
+  const floorOrder = config.floorOrder;
   const floorIndex = floorOrder.indexOf(floor);
 
   for (const element of mainContainer.children) {
@@ -148,13 +133,12 @@ function onDragEnd(event) {
         }
       } else if (elementIndex < floorIndex) {
         if(item.label.includes('plot')){
-          console.log(item.label)
           item.visible =false
           item.renderable=false
         }else{
           item.visible = true;
           item.renderable = true;
-        item.alpha = itemOpacity + 0.1; 
+        item.alpha = typeof itemOpacity ==='number' ?itemOpacity + 0.1 : 0; 
         }
       } else {
         item.visible = false;

@@ -1,77 +1,56 @@
 import * as PIXI from "pixi.js";
-
-const toScale = (sprite: PIXI.Sprite, app: PIXI.Application): number => {
-  const scale =
-    Math.max(
-      app.screen.width / sprite.width,
-      app.screen.height / sprite.height
-    ) * 0.5;
-  console.log("scale,sprite :>> ", scale, sprite);
-  return scale;
-};
-
-export const addSprite = async (app: PIXI.Application, config, type, floor) => {
-  console.log("config.src,floor,type :>> ", config.src, floor, type);
-  const texture = await PIXI.Assets.load(config.src);
+import type { GroupLayer, SingleLayer, Layer } from "../../types/types";
+export const createSprite = async (
+  itemConfiguration: GroupLayer | SingleLayer,
+  partConfiguration: GroupLayer | SingleLayer
+) => {
+  const src = partConfiguration.src ?? "";
+  const texture = await PIXI.Assets.load(src);
   const sprite = new PIXI.Sprite(texture);
-  sprite.label = type;
-  if (config.positionRule === "enabled") {
-    sprite.x = config?.x;
-    sprite.y = config?.y;
-  } else if (config?.positionRule === "disabled") {
-    sprite.x = (app.screen.width - sprite.width) / 2;
-    sprite.y = (app.screen.width - sprite.width) / 2;
-  }
-  if (config.sizeRule === "enabled") {
-    sprite.width = config.width;
-    sprite.height = config.height;
-  } else {
-    sprite.scale.set(toScale(sprite, app));
-  }
-
+  sprite.label = partConfiguration.name;
+  const positionX = itemConfiguration.position?.x ?? 0;
+  const positionY = itemConfiguration.position?.y ?? 0;
+  const width = itemConfiguration.size?.width ?? 0;
+  const height = itemConfiguration.size?.height ?? 0;
+  const zIndex = itemConfiguration.zIndex ?? 1;
+  sprite.x = positionX;
+  sprite.y = positionY;
+  sprite.width = width;
+  sprite.height = height;
+  sprite.zIndex = zIndex;
+  sprite.visible = false;
+  sprite.renderable = false;
   return sprite;
 };
-export const addOptionalSprite = async (
-  app: PIXI.Application,
-  config,
-  floorsObj,
-  type,
-  floor
+export const preventDefaultOnCanvas = (event: WheelEvent) => {
+  event.preventDefault();
+};
+
+const scaleSpeed = 0.1;
+const maxZoom = 2;
+
+const minZoom = 1;
+
+export const onWheel = (
+  event: WheelEvent,
+  view: HTMLCanvasElement,
+  container: PIXI.Container<PIXI.ContainerChild>
 ) => {
-  const texture: PIXI.Texture = await PIXI.Assets.load(config.element.src);
-  const sprite = new PIXI.Sprite(texture);
-  sprite.label = type;
-  if (config.element.positionRule === "enabled") {
-    sprite.x = config.element.x;
+  const oldScale = container.scale.x;
+  const newScale =
+    oldScale +
+    -1 * Math.max(-1, Math.min(1, event.deltaY)) * scaleSpeed * oldScale;
 
-    sprite.y = config.element.y;
-  } else if (config.element.positionRule === "disabled") {
-    sprite.x = (app.screen.width - sprite.width) / 2;
-    sprite.y = (app.screen.width - sprite.width) / 2;
+  // Проверяем, не меньше ли новый масштаб минимального предела
+  if (newScale >= minZoom && newScale <= maxZoom) {
+    const pointerX = event.clientX - view.getBoundingClientRect().left;
+    const pointerY = event.clientY - view.getBoundingClientRect().top;
+    const oldX = container.x;
+    const oldY = container.y;
+    const newX = pointerX - (pointerX - oldX) * (newScale / oldScale);
+    const newY = pointerY - (pointerY - oldY) * (newScale / oldScale);
+
+    container.scale.set(newScale);
+    container.position.set(newX, newY);
   }
-
-  if (config.element.sizeRule === "enabled") {
-    sprite.width = config.element.width;
-    sprite.height = config.element.height;
-  } else if (config.element.sizeRule === "disabled") {
-    sprite.scale.set(toScale(sprite, app));
-  }
-
-  floorsObj = {
-    ...floorsObj,
-
-    [floor]: {
-      ...floorsObj[floor],
-      options: {
-        ...floorsObj[floor].options,
-        [config.element.name]: {
-          ...[config.element.name],
-          sprite,
-          opacity: config.element.opacity,
-        },
-      },
-    },
-  };
-
-  return floorsObj;
 };

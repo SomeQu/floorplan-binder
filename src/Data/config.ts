@@ -1,8 +1,10 @@
 import type { IConfig } from "../types/types";
+export type floorOrderType = "GF" | "SF" | "FF";
 
 const config: IConfig = {
-  initialZoom: 1.0,
-
+  floorOrder: ["GF", "FF", "SF"],
+  minZoom: 1.0,
+  maxZoom: 2,
   layers: {
     GF: {
       type: "group",

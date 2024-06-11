@@ -8,29 +8,35 @@ interface Size {
   height: number;
 }
 
-interface Layer {
+export interface Layer {
   type: string;
   name: string;
   src?: string;
   opacity?: number;
   position?: Position;
   size?: Size;
-  zIndex: number;
+  zIndex?: number;
 }
 
-interface GroupLayer extends Layer {
+export interface GroupLayer extends Layer {
   type: "group";
   layers: Layer[];
 }
 
-interface SingleLayer extends Layer {
+export interface SingleLayer extends Layer {
   type: "single";
   layers: Layer[];
 }
-
+export type floorOrderForTypesType = string[];
 export interface IConfig {
-  initialZoom: number;
+  floorOrder: floorOrderForTypesType;
+  minZoom: number;
+  maxZoom: number;
   layers: {
     [key: string]: GroupLayer | SingleLayer;
   };
+}
+interface DragData {
+  startX: number;
+  startY: number;
 }
