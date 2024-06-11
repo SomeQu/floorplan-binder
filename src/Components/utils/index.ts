@@ -41,7 +41,7 @@ export const onWheel = (
   const diffY = event.clientY - (container as any).dragData.startY;
   let newX = (container as any).dragData.initialX + diffX;
   let newY = (container as any).dragData.initialY + diffY;
-  console.log("newX :>> ", newX);
+
   const oldScale = container.scale.x;
   const newScale =
     oldScale +
